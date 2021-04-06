@@ -108,7 +108,7 @@ ExtractCnyield <- function(dt) {
   index <- GetFirstSeason(dt)
   dt <- dt[, HWAH := ifelse(EDAT < 0 | ADAT < 0 | MDAT < 0, 0, HWAH)]
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = (HWAH / GNAM) * 0.4, MDAT, HWAH, GNAM)]
-  dt <- dt[, cnyield := ifelse(is.nan(cnyield), 0, cnyield)]
+  dt <- dt[, out := ifelse(is.nan(out), 0, out)]
   return(dt)
 }
 
