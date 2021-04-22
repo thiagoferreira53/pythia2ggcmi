@@ -56,8 +56,8 @@ BuildEnv <- function(crop, irrig = FALSE, cleared = FALSE) {
   return(lookup)
 }
 
-GetFirstSeason <- function(dt) {
-  first_season <- 1661 #dt[,SDAT][1] %/% 1000
+GetFirstSeason <- function() {
+  return(1661)
 }
 
 GetDSSATAsDate <- function(x) {
@@ -91,7 +91,7 @@ WriteNCDF <- function(f, dt, lookup, var) {
 
                                         # Always assume the input to these functions is the entire SUMMARY.CSV as a data.table
 ExtractYield <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
                                         # According to the GGCMI rules, if the plant does not reach maturity, the HWAH should be forced to 0. This makes that happen.
   dt <- dt[, HWAH := ifelse(EDAT < 0 | ADAT < 0 | MDAT < 0, 0, HWAH)]
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ud.convert(HWAH, "kg/ha", "tonnes/ha"))]
@@ -99,13 +99,13 @@ ExtractYield <- function(dt) {
 }
 
 ExtractBiom <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, growing_season = (SDAT %/% 1000) - index, out = ud.convert(CWAM, "kg/ha", "tonnes/ha"), MDAT)]
   return (dt)
 }
 
 ExtractCnyield <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, HWAH := ifelse(EDAT < 0 | ADAT < 0 | MDAT < 0, 0, HWAH)]
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = (HWAH / GNAM) * 0.4, MDAT, HWAH, GNAM)]
   dt <- dt[, out := ifelse(is.nan(out), 0, out)]
@@ -113,33 +113,33 @@ ExtractCnyield <- function(dt) {
 }
 
 ExtractPlantday <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = (PDAT %% 1000))]
   return(dt)
 }
 
 ExtractPlantyear <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = (PDAT %/% 1000))]
   return (dt)
 }
 
 ExtractAnthday <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = GetDSSATDateDifference(ADAT, PDAT))]
   dt <- dt[, .(growing_season = growing_season, lon = lon, lat = lat, out = ifelse(is.na(out),0,out))]
   return(dt)
 }
 
 ExtractMatyday <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = GetDSSATDateDifference(MDAT, PDAT))]
   dt <- dt[, .(growing_season = growing_season, lon = lon, lat = lat, out = ifelse(is.na(out),0,out))]
   return(dt)
 }
 
 ExtractHarvyear <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = (HDAT %/% 1000))]
   dt <- dt[, .(growing_season = growing_season, lon = lon, lat = lat, out = ifelse(is.na(out),0,out))]
   return (dt)
@@ -147,55 +147,55 @@ ExtractHarvyear <- function(dt) {
 
 
 ExtractPirnreq <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = IRCM)]
   return (dt)
 }
 
 ExtractAet <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ifelse(ETCP < 0, 0, ETCP))]
   return (dt)
 }
 
 ExtractTransp <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ifelse(EPCP < 0, 0, EPCP))]
   return (dt)
 }
 
 ExtractSoilevap <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ESCP)]
   return (dt)
 }
 
 ExtractRunoff <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ROCM)]
   return (dt)
 }
 
 ExtractTnrup <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = NUCM)]
   return (dt)
 }
 
 ExtractN2oemis <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ud.convert(N2OEC, "kg/ha", "g/m^2"))]
   return (dt)
 }
 
 ExtractNleach <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ud.convert(NLCM, "kg/ha", "g/m^2"))]
   return (dt)
 }
 
 ExtractTcemis <- function(dt) {
-  index <- GetFirstSeason(dt)
+  index <- GetFirstSeason()
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ud.convert(CO2EC, "kg/ha", "g/m^2"))]
   return (dt)
 }
@@ -212,7 +212,7 @@ ExtractTcemis <- function(dt) {
 }
 
 .CreateNCDF <- function(f, lookup, var, arr, n_lon, n_lat, n_time, lon, lat, t, fill_value) {
-  timedim <- ncdf4::ncdim_def("time", "growing seasons since 1850-01-01, 00:00:00", as.integer(t), longname="Growing Seasons since 1850-01-01, 00:00:00")
+  timedim <- ncdf4::ncdim_def("time", paste0("growing seasons since ",GetFirstSeason(),"-01-01, 00:00:00", as.integer(t), longname="Growing Seasons since ", GetFirstSeason(),"-01-01, 00:00:00")
   latdim <- ncdf4::ncdim_def("lat", "degrees_north", as.double(lat), longname = "Latitude")
   londim <- ncdf4::ncdim_def("lon", "degrees_east", as.double(lon), longname = "Longitude")
   out_def <- ncdf4::ncvar_def(lookup[[var]]$standard_name, lookup[[var]]$unit_to, list(londim, latdim, timedim), fill_value, lookup[[var]]$long_name, compression=7)
