@@ -57,7 +57,7 @@ BuildEnv <- function(crop, irrig = FALSE, cleared = FALSE) {
 }
 
 GetFirstSeason <- function(dt) {
-  first_season <- dt[,SDAT][1] %/% 1000
+  first_season <- 1601 #dt[,SDAT][1] %/% 1000
 }
 
 GetDSSATAsDate <- function(x) {
