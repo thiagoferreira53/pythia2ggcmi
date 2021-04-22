@@ -6,7 +6,7 @@ library(ncdf4, quietly = TRUE)
 GenerateNCFileName <- function(out_dir, climate_forcing, climate_scenario, soc_scenario, sens_scenario, var, crop, start_year, end_year, irrig = FALSE) {
   irrig <- ifelse(irrig, "firr", "noirr")
   var <- paste(var, crop, irrig, sep = "-")
-  model <- "dssat"
+  model <- "dssat-pythia"
   return(file.path(out_dir, paste0(paste(
                               model,
                               climate_forcing,
