@@ -7,10 +7,11 @@ GenerateNCFileName <- function(out_dir, climate_forcing, climate_scenario, soc_s
   irrig <- ifelse(irrig, "firr", "noirr")
   var <- paste(var, crop, irrig, sep = "-")
   model <- "dssat-pythia"
+  reanalysis <- paste0(climate_forcing,
+                              ifelse(toupper(climate_forcing) == "GSWP3", "-w5e5", "_w5e5"))
   return(file.path(out_dir, paste0(paste(
                               model,
-                              climate_forcing,
-                              "w5e5",
+                              reanalysis,
                               climate_scenario,
                               soc_scenario,
                               sens_scenario,
