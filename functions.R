@@ -213,7 +213,7 @@ ExtractTcemis <- function(dt) {
 }
 
 .CreateNCDF <- function(f, lookup, var, arr, n_lon, n_lat, n_time, lon, lat, t, fill_value) {
-  timedim <- ncdf4::ncdim_def("time", paste0("growing seasons since ",GetFirstSeason(),"-01-01, 00:00:00", as.integer(t), longname="Growing Seasons since ", GetFirstSeason(),"-01-01, 00:00:00")
+  timedim <- ncdf4::ncdim_def("time", paste0("growing seasons since ",GetFirstSeason(),"-01-01, 00:00:00"), as.integer(t), longname=paste0("Growing Seasons since ", GetFirstSeason(),"-01-01, 00:00:00"))
   latdim <- ncdf4::ncdim_def("lat", "degrees_north", as.double(lat), longname = "Latitude")
   londim <- ncdf4::ncdim_def("lon", "degrees_east", as.double(lon), longname = "Longitude")
   out_def <- ncdf4::ncvar_def(lookup[[var]]$standard_name, lookup[[var]]$unit_to, list(londim, latdim, timedim), fill_value, lookup[[var]]$long_name, compression=7)
