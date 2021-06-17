@@ -24,12 +24,24 @@ Options:
 
 "
 
+whereAmI <- function() {
+  cmds <- commandArgs()
+  res <- gsub("^(?:--file=(.*)|.*)$", "\\1", cmds)
+  res <- tail(res[res != ""], 1)
+  if (length(res) > 0)
+    return (normalizePath(dirname(res)))
+  "."
+}
 
 if (sys.nframe() == 0) {
   library(docopt)
   argv <- docopt(doc)
 
-  source("functions.R")
+  script.dir <- whereAmI()
+  script.import <- file.path(script.dir, "functions.R")
+  print(paste0("Attempting to import ", script.import))
+  source(script.import)
+
   if (argv$list_variables) {
     lookup <- BuildEnv("mai", TRUE, TRUE)
     llookup <- lapply(ls(lookup), function(x) paste0(x, ifelse(nchar(x) > 7, "\t", "\t\t"), lookup[[x]]$long_name))
