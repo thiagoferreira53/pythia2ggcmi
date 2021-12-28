@@ -29,21 +29,21 @@ dequeue <- function(queue) {
 
 .testCase <- function(t) {
   Sys.sleep(t)
-  return(t*t)
+  return(t * t)
 }
 
 .execute <- function(t) {
-  return(system2("sleep", args=paste0(t)))
+  return(system2("sleep", args = paste0(t)))
 }
 
 runtime <- function(slot.length = 4) {
   slots <- rep(NA, slot.length)
-  queue <- floor(runif(n=30, min=10, max=41))
+  queue <- floor(runif(n = 30, min = 10, max = 41))
   print(queue)
   print("----------")
-  while(length(queue) > 0) {
-    slots <- lapply(slots, function(x){
-      if(!is.list(x) && is.na(x)) {
+  while (length(queue) > 0) {
+    slots <- lapply(slots, function(x) {
+      if (!is.list(x) && is.na(x)) {
         if (length(queue) > 0) {
           qv <- dequeue(queue)
           queue <<- qv$queue
@@ -56,10 +56,10 @@ runtime <- function(slot.length = 4) {
       }
     })
     procs <- mccollect(wait = FALSE)
-    if(!is.null(procs)) {
+    if (!is.null(procs)) {
       print(queue)
       procNames <- names(procs)
-      slots <- lapply(slots, function(x){
+      slots <- lapply(slots, function(x) {
         if (is.list(x)) {
           if (paste0(x$pid) %in% procNames) {
             return(NA)
@@ -82,7 +82,7 @@ if (sys.nframe() == 0) {
   argv <- docopt(doc)
 
   if (!file.exists(argv$config_file)) {
-   stop(sprintf("%s not found.", argv$config_file))
+    stop(sprintf("%s not found.", argv$config_file))
   }
 
   library(jsonlite)

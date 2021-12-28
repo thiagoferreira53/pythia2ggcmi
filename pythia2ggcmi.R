@@ -28,8 +28,9 @@ whereAmI <- function() {
   cmds <- commandArgs()
   res <- gsub("^(?:--file=(.*)|.*)$", "\\1", cmds)
   res <- tail(res[res != ""], 1)
-  if (length(res) > 0)
-    return (normalizePath(dirname(res)))
+  if (length(res) > 0) {
+    return(normalizePath(dirname(res)))
+  }
   "."
 }
 
@@ -75,7 +76,7 @@ if (sys.nframe() == 0) {
   rm(csv)
   cat(" DONE\n")
   out_filename <- GenerateNCFileName(argv$output_directory, argv$gcm, argv$rcp, argv$soc, argv$sens, argv$ggcmi_variable, argv$crop, argv$start_year, argv$end_year, argv$i)
-  if(! dir.exists(argv$output_directory)) dir.create(argv$output_directory, recursive = TRUE)
+  if (!dir.exists(argv$output_directory)) dir.create(argv$output_directory, recursive = TRUE)
   cat("Writing data to ", out_filename, "...")
   WriteNCDF(out_filename, out_data, lookup, argv$ggcmi_variable)
   cat(" DONE\n")
