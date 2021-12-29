@@ -1,5 +1,7 @@
 doc <- "pythia2ggcmi.R - Convert pythia outputs to GGCMI outputs.
 
+Version: 0.2.0-beta
+
 Usage:
   pythia2ggcmi.R [-i] <pythia_csv> <output_directory> <ggcmi_variable> <crop> <gcm> <rcp> <soc> <sens> <start_year> <end_year>
   pythia2ggcmi.R (-l | --list-variables)
