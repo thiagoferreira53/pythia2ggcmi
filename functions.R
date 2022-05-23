@@ -101,15 +101,27 @@ WriteNCDF <- function(f, dt, lookup, var) {
 # Always assume the input to these functions is the entire SUMMARY.CSV as a data.table
 ExtractYield <- function(dt) {
   index <- GetFirstSeason()
-  # According to the GGCMI rules, if the plant does not reach maturity, the HWAH should be forced to 0. This makes that happen.
+  # According to the GGCMI rules, if the plant does not reach maturity,
+  # the HWAH should be forced to 0. This makes that happen.
   dt <- dt[, HWAH := ifelse(EDAT < 0 | ADAT < 0 | MDAT < 0, 0, HWAH)]
-  dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ud.convert(HWAH, "kg/ha", "tonnes/ha"))]
+  dt <- dt[, .(
+    growing_season = (SDAT %/% 1000) - index,
+    lon = LONGITUDE,
+    lat = LATITUDE,
+    out = ud.convert(HWAH, "kg/ha", "tonnes/ha")
+  )]
   return(dt)
 }
 
 ExtractBiom <- function(dt) {
   index <- GetFirstSeason()
-  dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, growing_season = (SDAT %/% 1000) - index, out = ud.convert(CWAM, "kg/ha", "tonnes/ha"), MDAT)]
+  dt <- dt[, .(
+    growing_season = (SDAT %/% 1000) - index,
+    lon = LONGITUDE,
+    lat = LATITUDE,
+    growing_season = (SDAT %/% 1000) - index,
+    out = ud.convert(CWAM, "kg/ha", "tonnes/ha"), MDAT
+  )]
   return(dt)
 }
 
@@ -117,7 +129,7 @@ ExtractCnyield <- function(dt) {
   index <- GetFirstSeason()
   dt <- dt[, HWAH := ifelse(EDAT < 0 | ADAT < 0 | MDAT < 0, 0, HWAH)]
   dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = (HWAH / GNAM) * 0.4, MDAT, HWAH, GNAM)]
-  dt <- dt[, out := ifelse(is.nan(out), 0, out)]
+  dt <- dt[, out := ifelse(is.infinite(out) | is.nan(out) | out < 0, 0, out)]
   return(dt)
 }
 
