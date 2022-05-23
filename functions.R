@@ -89,12 +89,14 @@ GetDSSATDateDifference <- function(d1, d2) {
 WriteNCDF <- function(f, dt, lookup, var) {
   n_lon <- 720
   n_lat <- 360
-  n_gs <- max(dt[, growing_season]) + 1
+  s_gs <- min(dt[, growing_season])
+  e_gs <- max(dt[, growing_season])
+  n_gs <- (e_gs - s_gs) + 1
   lon <- as.array(seq(-179.75, 179.75, 0.50))
   lat <- as.array(seq(89.75, -89.75, -0.50))
-  gs <- as.array(seq(0, (n_gs - 1)))
+  gs <- as.array(seq(s_gs, e_gs))
   fill_value <- 1e20
-  arr <- .BuildFullArray(dt, n_lon, n_lat, n_gs, lon, lat, fill_value)
+  arr <- .BuildFullArray(dt, n_lon, n_lat, n_gs, lon, lat, s_gs, fill_value)
   .CreateNCDF(f, lookup, var, arr, n_lon, n_lat, n_gs, lon, lat, gs, fill_value)
 }
 
@@ -221,14 +223,12 @@ ExtractTcemis <- function(dt) {
   return(dt)
 }
 
-.BuildFullArray <- function(dt, n_lon, n_lat, n_time, lon, lat, fill_value) {
+.BuildFullArray <- function(dt, n_lon, n_lat, n_time, lon, lat, gs_offset, fill_value) {
   df <- as.data.frame(dt)
   data_array <- array(fill_value, dim = c(n_lon, n_lat, n_time))
   j <- sapply(df$lat, function(x) which.min(abs(lat - x)))
   k <- sapply(df$lon, function(x) which.min(abs(lon - x)))
-  nobs <- dim(df)[1]
-  l <- rep(df$growing_season, length.out = nobs)
-  data_array[cbind(k, j, l)] <- df$out
+  data_array[cbind(k, j, (df$growing_season-gs_offset)+1)] <- df$out
   return(data_array)
 }
 
