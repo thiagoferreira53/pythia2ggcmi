@@ -34,7 +34,7 @@ ImportCSV <- function(csv) {
 BuildEnv <- function(crop, irrig = FALSE, cleared = FALSE) {
   global_entry <- list()
   global_entry$inst <- "University of Florida (UF)"
-  global_entry$contact <- "Oscar Castillo <ocastilloromero@ufl.edu>"
+  global_entry$contact <- "Thiago Berton Ferreira <t.berton@ufl.edu>"
   codes <- .BuildCodeLookup()
   valid_crop <- codes[[crop]]
   if (is.null(valid_crop)) {
@@ -83,7 +83,11 @@ GetDSSATDateDifference <- function(d1, d2) {
   if (is.na(d1) || is.na(d2)) {
     return(NA)
   }
-  return(as.integer(d1 - d2))
+  dif <- as.integer(d1 - d2)
+  if(dif > 366){
+    return(NA)
+  }
+  return(dif)
 }
 
 WriteNCDF <- function(f, dt, lookup, var) {
@@ -137,7 +141,7 @@ ExtractCnyield <- function(dt) {
 
 ExtractPlantday <- function(dt) {
   index <- GetFirstSeason()
-  dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = (PDAT %% 1000))]
+  dt <- data[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ifelse(PDAT>=2101365, 0, PDAT %% 1000))]
   return(dt)
 }
 
@@ -163,7 +167,7 @@ ExtractMatyday <- function(dt) {
 
 ExtractHarvyear <- function(dt) {
   index <- GetFirstSeason()
-  dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = (HDAT %/% 1000))]
+  dt <- data[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ifelse(MDAT!=-99,(HDAT %/% 1000),0))]
   dt <- dt[, .(growing_season = growing_season, lon = lon, lat = lat, out = ifelse(is.na(out), 0, out))]
   return(dt)
 }
@@ -189,7 +193,7 @@ ExtractTransp <- function(dt) {
 
 ExtractSoilevap <- function(dt) {
   index <- GetFirstSeason()
-  dt <- dt[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ESCP)]
+  dt <- data[, .(growing_season = (SDAT %/% 1000) - index, lon = LONGITUDE, lat = LATITUDE, out = ifelse(ESCP<0, 0,ESCP))]
   return(dt)
 }
 
